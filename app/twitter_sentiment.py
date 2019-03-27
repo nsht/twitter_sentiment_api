@@ -63,7 +63,6 @@ def analyse(search_term):
         result["mean_score"] = mean_scores
         scores.sort(key=lambda a: a[0])
         # TODO Word cloud, time-series graph,popular positive/negative tweets, +ve -ve tweets by popular users
-        print(scores)
         result["top_positive_tweets"] = scores[-5:]
         result["top_negative_tweets"] = scores[:5]
         scores.sort(key=lambda a: a[2],reverse=True)

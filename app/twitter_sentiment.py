@@ -44,21 +44,30 @@ def fetch_geo_code(location):
 
 def analyse(search_term):
     api = Twitter().connect()
-    search_results = api.search(q=search_term, count=1000)
+    search_results = api.search(q=search_term, count=1000,result_type="mixed")
     # also checkout https://github.com/sloria/TextBlob
     sid_obj = SentimentIntensityAnalyzer()
     result = {}
     scores = []
 
     for tweet in search_results:
-        scores.append([sid_obj.polarity_scores(tweet.text).get("compound"), tweet.text])
+        scores.append(
+            [
+                sid_obj.polarity_scores(tweet.text).get("compound"),
+                tweet.text,
+                tweet.favorite_count + tweet.retweet_count
+            ]
+        )
     if len(scores) > 1:
         mean_scores = statistics.mean([score[0] for score in scores])
         result["mean_score"] = mean_scores
         scores.sort(key=lambda a: a[0])
         # TODO Word cloud, time-series graph,popular positive/negative tweets, +ve -ve tweets by popular users
+        print(scores)
         result["top_positive_tweets"] = scores[-5:]
         result["top_negative_tweets"] = scores[:5]
+        scores.sort(key=lambda a: a[2],reverse=True)
+        result["top_tweets"] = scores[:5]
     return result
 
 
